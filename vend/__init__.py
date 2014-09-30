@@ -103,8 +103,6 @@ class API(object):
                 params = urllib.urlencode(kwargs)
                 if params:
                     path += '?'+params
-
-            print "API %s %s %s" % (method, path, pformat(payload))
             return self._request(method, path, payload)
         return api_call
 

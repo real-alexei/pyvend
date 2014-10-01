@@ -47,15 +47,14 @@ class APITestCase(unittest.TestCase):
         assert domain_prefix == os.environ['STORE_ADDRESS']
                 
         # Request auth token pair: access & refresh
-        access_token, refresh_token = self.auth.request_token(code, domain_prefix)
-        self._assert_access_token(access_token)
-        assert refresh_token
+        token = self.auth.request_token(code, domain_prefix)
+        self._assert_token(token, refresh_token_required=True)
 
         # Refresh access token
-        access_token = self.auth.refresh_token(refresh_token, domain_prefix)
-        self._assert_access_token(access_token)
+        token = self.auth.refresh_token(token, domain_prefix)
+        self._assert_token(token, refresh_token_required=False)
 
-        api = vend.API(access_token, domain_prefix)
+        api = vend.API(token, domain_prefix)
 
         # Wrong endpoint name will raise APIError
         self.assertRaises(vend.APIError, api.blah)
@@ -99,12 +98,14 @@ class APITestCase(unittest.TestCase):
         assert 'customers' in customers
         assert [] == customers['customers']
 
-    def _assert_access_token(self, token):
-        assert isinstance(token, vend.AccessToken)
-        assert token.token
+    def _assert_token(self, token, refresh_token_required):
+        assert isinstance(token, vend.Token)
+        assert token.access_token
         assert token.type == 'Bearer'
         assert token.expires
         assert token.expires_in
+        if refresh_token_required:
+            assert token.refresh_token
 
 
 class AuthFormParser(HTMLParser):

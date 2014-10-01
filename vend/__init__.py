@@ -75,7 +75,7 @@ class API(object):
 
     Here is an example usage::
 
-        api = API(access_token)
+        api = API(token)
         api.customers(params={'email': 'aleks.selivanov@yahoo.com'}) # GET /api/customers?email=aleks.selivanov@yahoo.com
         api.supplier(post=data) # POST data to /api/supplier
         api.supplier(5, put=data) # PUT data to /api/supplier/5

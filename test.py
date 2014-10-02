@@ -57,7 +57,10 @@ class APITestCase(unittest.TestCase):
         api = vend.API(token, domain_prefix)
 
         # Wrong endpoint name will raise APIError
-        self.assertRaises(vend.APIError, api.blah)
+        try:
+            api.blah()
+        except vend.APIError, e:
+            assert e.status == 404
 
         # Create a product (POST)
         response = api.products(post={

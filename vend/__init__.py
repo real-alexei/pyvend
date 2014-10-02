@@ -117,21 +117,30 @@ class API(object):
             headers.update(self._base_headers)
             c.request(method, path, json.dumps(payload) if payload else None, headers)
             response = c.getresponse()
-            response = json.loads(response.read())
-            if 'error' in response:
-                raise APIError(response['error'])
-            return response
+            payload = json.loads(response.read())
+            if response.status == 200:
+                return payload
+            else:
+                raise APIError(response.status, payload)
         finally:
             c.close()
 
 
 class APIError(Exception):
-    def __init__(self, message, details=None,  status=None):
-        Exception.__init__(self, message)
+    """Generic wrapper for all non-200 API responses."""
+
+    def __init__(self, status, data):
         self.status = status
-        self.details = details
+        self.data = data
+        return super(APIError, self).__init__(status, data)
+
+    def __getitem__(self, key):
+        if key in self.data:
+            return self.data[key]
+        raise KeyError(key)
+
+    def __repr__(self):
+        return repr(self.data)
 
     def __str__(self):
-        if self.details:
-            return "%s: %s" % (self.message, self.details)
-        return self.message
+        return str(self.data)

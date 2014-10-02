@@ -61,6 +61,12 @@ class APITestCase(unittest.TestCase):
             api.blah()
         except vend.APIError, e:
             assert e.status == 404
+            
+        # Invalid input
+        response = api.products(post={"invalid": "data"})
+        assert response['status'] == 'error'
+        assert 'error' in response
+        assert 'details' in response
 
         # Create a product (POST)
         response = api.products(post={

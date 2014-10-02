@@ -132,7 +132,7 @@ class APIError(Exception):
     def __init__(self, status, data):
         self.status = status
         self.data = data
-        return super(APIError, self).__init__(status, data)
+        super(APIError, self).__init__(status, data)
 
     def __getitem__(self, key):
         if key in self.data:

@@ -1,4 +1,4 @@
-# pyvend&mdash;thin Vend API wrapper for Python
+# pyvend is a thin Vend API wrapper for Python
 
 ## Usage
 
@@ -22,3 +22,18 @@ Here are some examples.
     api.customers(params={'email': 'aleks.selivanov@yahoo.com'}) # GET /api/customers?email=aleks.selivanov@yahoo.com
     api.supplier(post=data) # POST data to /api/supplier
     api.supplier(5, put=data) # PUT data to /api/supplier/5
+
+    # Handle errors
+    try:
+        api.blah()
+    except vend.APIError, e:
+        e.status # 404
+        str(e) # {'error': 'Endpoint not found'}
+
+    # Note that invalid input does not raise APIError and must be handled as normal response
+    response = api.products(post={"invalid": "data"})
+    # {
+    #   'details': 'Missing handle',
+    #   'error': 'Could not Add or Update',
+    #   'status': 'error'
+    # }
